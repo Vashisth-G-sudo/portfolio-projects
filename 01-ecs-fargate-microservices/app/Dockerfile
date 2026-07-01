@@ -8,6 +8,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
+COPY index.html .
 
 # Run as a non-root user (least privilege inside the container).
 RUN useradd --create-home appuser

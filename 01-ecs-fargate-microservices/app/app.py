@@ -6,7 +6,7 @@ stays on the ECS/Fargate/ALB architecture rather than application logic.
 import os
 import socket
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, send_from_directory
 
 app = Flask(__name__)
 
@@ -27,6 +27,13 @@ def health():
 
 @app.get("/")
 def index():
+    """Serve the storefront web page."""
+    return send_from_directory(os.path.dirname(__file__), "index.html")
+
+
+@app.get("/api/info")
+def info():
+    """JSON service info (previously served at /)."""
     return jsonify(
         service="shopfront-api",
         # Task hostname proves requests are load-balanced across tasks.
