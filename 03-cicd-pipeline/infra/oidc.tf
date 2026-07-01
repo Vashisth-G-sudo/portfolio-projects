@@ -22,6 +22,14 @@ variable "github_repo" {
 
 data "aws_caller_identity" "current" {}
 
+locals {
+  tags = {
+    Project     = "shopfront-cicd"
+    ManagedBy   = "terraform"
+    auto-delete = "no" # opt out of account auto-cleanup automation
+  }
+}
+
 # --- GitHub OIDC provider ---------------------------------------------------
 # Lets GitHub Actions exchange its workflow token for short-lived AWS creds.
 # No long-lived access keys anywhere.
@@ -29,6 +37,7 @@ resource "aws_iam_openid_connect_provider" "github" {
   url             = "https://token.actions.githubusercontent.com"
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["6938fd4d98bab03faadb97b34396831e3780aea1"]
+  tags            = local.tags
 }
 
 # --- Role the pipeline assumes ----------------------------------------------
@@ -52,6 +61,8 @@ resource "aws_iam_role" "deploy" {
       }
     }]
   })
+
+  tags = local.tags
 }
 
 # Least-privilege: only what the deploy workflow actually needs.

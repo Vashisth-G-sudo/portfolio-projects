@@ -22,5 +22,6 @@ locals {
     Project     = "orders-eks"
     ManagedBy   = "terraform"
     Environment = "ephemeral" # this stack is meant to be created and destroyed
+    auto-delete = "no"        # opt out of account auto-cleanup automation
   }
 }

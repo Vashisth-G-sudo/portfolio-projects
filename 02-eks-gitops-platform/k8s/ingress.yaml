@@ -9,6 +9,8 @@ metadata:
     alb.ingress.kubernetes.io/target-type: ip
     alb.ingress.kubernetes.io/healthcheck-path: /healthz
     alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    # Tag the ALB the controller provisions (it's not created by Terraform).
+    alb.ingress.kubernetes.io/tags: auto-delete=no,Project=orders-eks,ManagedBy=terraform
 spec:
   ingressClassName: alb
   rules:

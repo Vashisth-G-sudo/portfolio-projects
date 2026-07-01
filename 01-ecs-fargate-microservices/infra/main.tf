@@ -22,5 +22,6 @@ locals {
     Project     = "shopfront-ecs"
     ManagedBy   = "terraform"
     Environment = "demo"
+    auto-delete = "no" # opt out of account auto-cleanup automation
   }
 }
