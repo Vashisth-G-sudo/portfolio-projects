@@ -3,48 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShopFront — running on Amazon ECS Fargate</title>
+  <title>ShopFront — dynamic catalog on Amazon ECS + DynamoDB</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #0f172a;
-      color: #e2e8f0;
-      min-height: 100vh;
+      background: #0f172a; color: #e2e8f0; min-height: 100vh;
     }
     header {
       background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-      padding: 48px 24px 56px;
-      text-align: center;
+      padding: 44px 24px 52px; text-align: center;
     }
-    header h1 { font-size: 2.4rem; color: #fff; letter-spacing: -0.5px; }
-    header p { color: #ede9fe; margin-top: 8px; font-size: 1.05rem; }
+    header h1 { font-size: 2.3rem; color: #fff; letter-spacing: -0.5px; }
+    header p { color: #ede9fe; margin-top: 8px; }
     .badge {
-      display: inline-block; margin-top: 16px; padding: 6px 14px;
+      display: inline-block; margin-top: 14px; padding: 6px 14px;
       background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.35);
-      border-radius: 999px; font-size: 0.85rem; color: #fff; backdrop-filter: blur(4px);
+      border-radius: 999px; font-size: 0.82rem; color: #fff;
     }
-    main { max-width: 960px; margin: -32px auto 0; padding: 0 24px 48px; }
-    .grid {
-      display: grid; gap: 20px;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    }
-    .card {
+    main { max-width: 960px; margin: -30px auto 0; padding: 0 24px 48px; }
+    .addbar {
       background: #1e293b; border: 1px solid #334155; border-radius: 16px;
-      padding: 24px; transition: transform 0.15s ease, border-color 0.15s ease;
+      padding: 16px; display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px;
+    }
+    .addbar input {
+      background: #0f172a; border: 1px solid #334155; color: #e2e8f0;
+      padding: 10px 12px; border-radius: 10px; font-size: .95rem;
+    }
+    .addbar input.name { flex: 1; min-width: 160px; }
+    .addbar input.price { width: 120px; }
+    .addbar button, .card button {
+      border: none; border-radius: 10px; background: #6366f1; color: #fff;
+      font-weight: 600; cursor: pointer; padding: 10px 16px; transition: background .15s ease;
+    }
+    .addbar button:hover, .card button:hover { background: #4f46e5; }
+    .grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .card {
+      background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 22px;
+      transition: transform .15s ease, border-color .15s ease;
     }
     .card:hover { transform: translateY(-4px); border-color: #6366f1; }
-    .card .emoji { font-size: 2.2rem; }
-    .card h3 { margin: 12px 0 6px; font-size: 1.1rem; color: #f8fafc; }
-    .card .price { font-size: 1.35rem; font-weight: 700; color: #a5b4fc; }
-    .card button {
-      margin-top: 16px; width: 100%; padding: 10px; border: none; border-radius: 10px;
-      background: #6366f1; color: #fff; font-weight: 600; cursor: pointer;
-      transition: background 0.15s ease;
-    }
-    .card button:hover { background: #4f46e5; }
+    .card .emoji { font-size: 2rem; }
+    .card h3 { margin: 10px 0 4px; font-size: 1.05rem; color: #f8fafc; }
+    .card .price { font-size: 1.3rem; font-weight: 700; color: #a5b4fc; }
+    .card .actions { margin-top: 14px; display: flex; gap: 8px; }
+    .card .actions button { flex: 1; padding: 8px; font-size: .85rem; }
+    .card .del { background: #b91c1c; }
+    .card .del:hover { background: #991b1b; }
+    .card .edit { background: #334155; }
+    .card .edit:hover { background: #475569; }
     footer {
-      max-width: 960px; margin: 32px auto 0; padding: 20px 24px 48px;
+      max-width: 960px; margin: 30px auto 0; padding: 20px 24px 48px;
       text-align: center; color: #94a3b8; font-size: 0.85rem;
     }
     footer code { color: #a5b4fc; background: #1e293b; padding: 2px 8px; border-radius: 6px; }
@@ -54,47 +63,97 @@
 <body>
   <header>
     <h1>🛒 ShopFront</h1>
-    <p>A containerized microservice storefront</p>
-    <span class="badge">☁️ Running on Amazon ECS Fargate</span>
+    <p>A dynamic, database-backed storefront</p>
+    <span class="badge">☁️ Amazon ECS Fargate + DynamoDB</span>
   </header>
 
   <main>
-    <div class="grid" id="products">
-      <p>Loading products…</p>
+    <div class="addbar">
+      <input class="name" id="new-name" placeholder="Product name" />
+      <input class="price" id="new-price" type="number" step="0.01" placeholder="Price" />
+      <button id="add-btn">+ Add product</button>
     </div>
+    <div class="grid" id="products"><p>Loading products…</p></div>
   </main>
 
   <footer>
     <div id="served-by">Connecting to backend…</div>
-    <div class="arch">Browser → Application Load Balancer → ECS Fargate task → this response</div>
+    <div class="arch">Browser → CloudFront → ALB → ECS Fargate task → DynamoDB</div>
   </footer>
 
   <script>
-    const EMOJIS = ["👟", "🧦", "🍶", "🎒", "🧢", "🧤"];
+    const EMOJIS = ["👟", "🧦", "🍶", "🎒", "🧢", "🧤", "🕶️", "⌚"];
+    const grid = document.getElementById("products");
+
+    async function api(path, opts) {
+      const res = await fetch(path, {
+        headers: { "Content-Type": "application/json" }, ...opts,
+      });
+      if (!res.ok) throw new Error("Request failed");
+      return res.json();
+    }
 
     async function load() {
       try {
-        const res = await fetch("/products");
-        const data = await res.json();
-        const grid = document.getElementById("products");
+        const data = await api("/products");
         grid.innerHTML = "";
+        if (!data.products.length) {
+          grid.innerHTML = "<p>No products yet — add one above.</p>";
+        }
         data.products.forEach((p, i) => {
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
             <div class="emoji">${EMOJIS[i % EMOJIS.length]}</div>
-            <h3>${p.name}</h3>
-            <div class="price">$${p.price.toFixed(2)}</div>
-            <button>Add to cart</button>`;
+            <h3>${escapeHtml(p.name)}</h3>
+            <div class="price">$${Number(p.price).toFixed(2)}</div>
+            <div class="actions">
+              <button class="edit">Edit</button>
+              <button class="del">Delete</button>
+            </div>`;
+          card.querySelector(".edit").onclick = () => editProduct(p);
+          card.querySelector(".del").onclick = () => delProduct(p.id);
           grid.appendChild(card);
         });
         document.getElementById("served-by").innerHTML =
-          `Served by Fargate task <code>${data.served_by}</code>`;
+          `Served by Fargate task <code>${data.served_by}</code> · data in DynamoDB`;
       } catch (e) {
-        document.getElementById("products").innerHTML =
-          "<p>Could not reach the backend.</p>";
+        grid.innerHTML = "<p>Could not reach the backend.</p>";
       }
     }
+
+    async function addProduct() {
+      const name = document.getElementById("new-name").value.trim();
+      const price = parseFloat(document.getElementById("new-price").value);
+      if (!name || isNaN(price)) { alert("Enter a name and price."); return; }
+      await api("/products", { method: "POST", body: JSON.stringify({ name, price }) });
+      document.getElementById("new-name").value = "";
+      document.getElementById("new-price").value = "";
+      load();
+    }
+
+    async function editProduct(p) {
+      const name = prompt("Product name:", p.name);
+      if (name === null) return;
+      const priceStr = prompt("Price:", p.price);
+      if (priceStr === null) return;
+      const price = parseFloat(priceStr);
+      if (isNaN(price)) { alert("Invalid price."); return; }
+      await api(`/products/${p.id}`, { method: "PUT", body: JSON.stringify({ name: name.trim(), price }) });
+      load();
+    }
+
+    async function delProduct(id) {
+      if (!confirm("Delete this product?")) return;
+      await api(`/products/${id}`, { method: "DELETE" });
+      load();
+    }
+
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+
+    document.getElementById("add-btn").onclick = addProduct;
     load();
   </script>
 </body>

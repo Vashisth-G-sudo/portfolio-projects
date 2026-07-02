@@ -35,8 +35,11 @@ All resources tagged `auto-delete = no`, `Project = shopfront-ecs`,
 | App Auto Scaling Target | app | `arn:aws:application-autoscaling:us-east-1:471112712607:scalable-target/0ec57701b9de9cafb12f3843eaa335a5` |
 | App Auto Scaling Policy | cpu | `arn:aws:autoscaling:us-east-1:471112712607:scalingPolicy:.../shopfront-cpu-scaling` |
 | CloudFront Distribution | app | `arn:aws:cloudfront::471112712607:distribution/E20MI37DCKPIBD` (domain `d1wfp69cotudi8.cloudfront.net`) |
+| DynamoDB Table | products | `arn:aws:dynamodb:us-east-1:471112712607:table/shopfront-products` |
+| IAM Task Role | task | `arn:aws:iam::471112712607:role/shopfront-task-...` |
+| IAM Task Role Policy | task_dynamodb | (inline `shopfront-dynamodb` on the task role) |
 
-**Total: 24 created resources.**
+**Total: 27 created resources.** The app is now dynamic — products are stored in DynamoDB with full create/read/update/delete.
 
 ## Tear down
 

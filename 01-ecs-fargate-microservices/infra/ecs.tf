@@ -40,6 +40,40 @@ resource "aws_iam_role_policy_attachment" "execution" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
+# Task role: what the application code (container) is allowed to do at runtime.
+# Least-privilege — only CRUD on the single products table.
+resource "aws_iam_role" "task" {
+  name_prefix = "${local.name}-task-"
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action    = "sts:AssumeRole"
+      Effect    = "Allow"
+      Principal = { Service = "ecs-tasks.amazonaws.com" }
+    }]
+  })
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy" "task_dynamodb" {
+  name = "${local.name}-dynamodb"
+  role = aws_iam_role.task.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "dynamodb:GetItem",
+        "dynamodb:PutItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Scan"
+      ]
+      Resource = aws_dynamodb_table.products.arn
+    }]
+  })
+}
+
 resource "aws_ecs_task_definition" "app" {
   family                   = local.name
   requires_compatibilities = ["FARGATE"]
@@ -47,13 +81,18 @@ resource "aws_ecs_task_definition" "app" {
   cpu                      = 256 # 0.25 vCPU — smallest, cheapest Fargate size
   memory                   = 512 # 0.5 GB
   execution_role_arn       = aws_iam_role.execution.arn
+  task_role_arn            = aws_iam_role.task.arn
 
   container_definitions = jsonencode([{
     name      = "app"
     image     = var.container_image != "" ? var.container_image : "${aws_ecr_repository.app.repository_url}:latest"
     essential = true
     portMappings = [{ containerPort = 8080, protocol = "tcp" }]
-    environment = [{ name = "APP_VERSION", value = "1.0.0" }]
+    environment = [
+      { name = "APP_VERSION", value = "1.0.0" },
+      { name = "TABLE_NAME", value = aws_dynamodb_table.products.name },
+      { name = "AWS_REGION", value = var.region }
+    ]
     logConfiguration = {
       logDriver = "awslogs"
       options = {
