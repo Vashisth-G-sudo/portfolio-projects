@@ -1,11 +1,11 @@
 # Orders Platform on Amazon EKS
 
-**An ephemeral, cost-managed Kubernetes environment** — stand it up to demo or
+**An ephemeral, cost-managed Kubernetes environment** - stand it up to demo or
 record a walkthrough, then tear it down so you only pay for the hours you use.
 
 ## The Big Picture
 
-I built this to run a containerized service on **Amazon EKS** — AWS's managed
+I built this to run a containerized service on **Amazon EKS** - AWS's managed
 Kubernetes. Where the ECS project shows the "containers with minimum overhead"
 path, this one shows the "full Kubernetes platform" path: the same kind of
 workload, but deployed the way a Kubernetes-standardized organization would run
@@ -31,11 +31,11 @@ API), which makes load balancing and autoscaling visible during a demo.
 
 ### 2. Amazon EKS (the control plane)
 The managed Kubernetes control plane. AWS runs and scales the API server and
-etcd across multiple AZs. This is what makes the cluster "just work" — but it's
+etcd across multiple AZs. This is what makes the cluster "just work" - but it's
 also the ~$73/month line item, which is why I run this environment ephemerally.
 
 ### 3. Managed Node Group (the workers)
-A managed group of `t3.small` **Spot** instances (1–3 nodes) where pods actually
+A managed group of `t3.small` **Spot** instances (1-3 nodes) where pods actually
 run. Managed node groups handle provisioning, draining, and rolling updates for
 me. Spot capacity cuts the compute bill by ~70%.
 
@@ -52,13 +52,13 @@ is the idiomatic "Kubernetes-native" way to expose a service on EKS.
 
 ### 6. Horizontal Pod Autoscaler (the elasticity)
 The HPA watches average pod CPU and scales replicas between 2 and 6. Combined
-with the node group's scaling, the platform grows and shrinks with load — the
+with the node group's scaling, the platform grows and shrinks with load - the
 Kubernetes equivalent of the ECS autoscaling story.
 
 ### 7. IRSA (least-privilege for pods)
 IAM Roles for Service Accounts is enabled so workloads (like the Load Balancer
 Controller) get **only** the AWS permissions they need, scoped to a specific
-Kubernetes service account — not broad node-level permissions.
+Kubernetes service account - not broad node-level permissions.
 
 ## How I Kept It Secure
 
@@ -74,13 +74,13 @@ Kubernetes service account — not broad node-level permissions.
 ## Why This Is Cost-Effective
 
 EKS is inherently more expensive than ECS because of the control-plane fee, so
-the cost strategy here is **operational, not just architectural** — exactly the
+the cost strategy here is **operational, not just architectural** - exactly the
 FinOps thinking expected of a Solutions Architect:
 
 - **Ephemeral by design.** One command builds the cluster, one destroys it.
   Real spend = demo hours only. Left running 24/7 it's ~$80/month; run for a
   2-hour demo it's roughly **$0.30**.
-- **Spot worker nodes** — ~70% cheaper than on-demand.
+- **Spot worker nodes** - ~70% cheaper than on-demand.
 - **`t3.small` nodes** and a **single NAT Gateway** (not one per AZ).
 - **ECR lifecycle policy** keeps image storage near-zero.
 
@@ -106,7 +106,7 @@ docker tag orders-api:latest $REPO:latest
 docker push $REPO:latest
 
 # Install metrics-server (needed for the HPA) and the AWS Load Balancer Controller
-# — see docs links in COST.md / below.
+# - see docs links in COST.md / below.
 
 # Deploy the workload (edit k8s/deployment.yaml image to $REPO:latest first)
 kubectl apply -f ../k8s/namespace.yaml
@@ -132,7 +132,7 @@ terraform destroy
 Amazon EKS, Kubernetes fundamentals (Deployments, Services, Ingress, probes,
 resource management), the Horizontal Pod Autoscaler, the AWS Load Balancer
 Controller, IRSA least-privilege, private-subnet worker design, Spot cost
-optimization, Terraform with community modules, and — critically — an
+optimization, Terraform with community modules, and - critically - an
 **ephemeral environment discipline** to keep a pricey service affordable.
 
 Built with the help of [Kiro](https://kiro.dev), Amazon's AI-powered IDE.

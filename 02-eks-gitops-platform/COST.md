@@ -1,4 +1,4 @@
-# Cost Breakdown — Orders Platform on Amazon EKS
+# Cost Breakdown - Orders Platform on Amazon EKS
 
 Region: `us-east-1`. Approximate; verify with the
 [AWS Pricing Calculator](https://calculator.aws).
@@ -20,7 +20,7 @@ requires **operational** cost control, not just architectural choices.
 | ECR + CloudWatch | low volume | **~$2** |
 | **Total (24/7)** | | **~$130+ / month** ❌ |
 
-That busts the $50 budget — mostly the control plane, NAT, and ALB fixed costs.
+That busts the $50 budget - mostly the control plane, NAT, and ALB fixed costs.
 
 ### The strategy: ephemeral environment ✅
 
@@ -38,11 +38,11 @@ environments to control spend.
 
 ## Cost levers I built in
 
-- **Ephemeral lifecycle** — the single biggest lever. One command up, one down.
-- **Spot worker nodes** (`use_spot = true`) — ~70% off compute.
-- **`t3.small` nodes** — smallest practical size for a demo workload.
-- **Single NAT Gateway** instead of one per AZ — saves ~$33/month.
-- **ECR lifecycle policy** — keep only the last 5 images.
+- **Ephemeral lifecycle** - the single biggest lever. One command up, one down.
+- **Spot worker nodes** (`use_spot = true`) - ~70% off compute.
+- **`t3.small` nodes** - smallest practical size for a demo workload.
+- **Single NAT Gateway** instead of one per AZ - saves ~$33/month.
+- **ECR lifecycle policy** - keep only the last 5 images.
 
 ## Talking point for interviews
 
@@ -50,5 +50,5 @@ environments to control spend.
 > portfolio I treated the cluster like a non-production environment: fully
 > codified in Terraform and destroyed when idle, so actual spend was demo hours
 > only. If this were production, I'd justify the control-plane cost with the
-> Kubernetes ecosystem benefits — portability, GitOps, operators — and drive
+> Kubernetes ecosystem benefits - portability, GitOps, operators - and drive
 > per-workload cost down with Spot, Karpenter/right-sizing, and Savings Plans."

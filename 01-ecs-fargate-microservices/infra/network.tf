@@ -1,7 +1,7 @@
 # --- Networking -------------------------------------------------------------
 # A minimal 2-AZ VPC. Tasks run in PUBLIC subnets with a public IP so we can
 # skip a NAT Gateway (~$32/mo). This is a deliberate cost trade-off documented
-# in COST.md — the tasks are still protected by security groups that only allow
+# in COST.md - the tasks are still protected by security groups that only allow
 # traffic from the ALB.
 
 resource "aws_vpc" "main" {
@@ -62,7 +62,7 @@ resource "aws_security_group" "alb" {
   tags = merge(local.tags, { Name = "${local.name}-alb-sg" })
 }
 
-# Tasks ONLY accept traffic from the ALB security group — not the internet.
+# Tasks ONLY accept traffic from the ALB security group - not the internet.
 resource "aws_security_group" "task" {
   name_prefix = "${local.name}-task-"
   vpc_id      = aws_vpc.main.id

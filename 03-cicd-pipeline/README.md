@@ -1,4 +1,4 @@
-# CI/CD Pipeline — GitHub Actions → Amazon ECS
+# CI/CD Pipeline - GitHub Actions → Amazon ECS
 
 Automated, keyless deployments for the [ShopFront ECS app](../01-ecs-fargate-microservices/).
 Push to `main` → build image → push to ECR → rolling deploy to ECS, with zero
@@ -9,7 +9,7 @@ long-lived AWS credentials stored anywhere.
 I wanted every code change to ship to production automatically and safely. This
 pipeline does that in one workflow: when I push to `main`, GitHub Actions builds
 a fresh Docker image, pushes it to ECR, registers a new ECS task definition
-pointing at that image, and triggers a **rolling update** — old tasks drain only
+pointing at that image, and triggers a **rolling update** - old tasks drain only
 after new ones pass their health checks.
 
 Here's how a change flows:
@@ -29,7 +29,7 @@ can also be triggered manually from the Actions tab.
 Instead of storing an AWS access key as a GitHub secret, GitHub exchanges its
 signed workflow token for **short-lived** AWS credentials by assuming an IAM
 role. The trust policy only allows the `main` branch of one specific repo to
-assume it. This is the modern, recommended way to connect CI to AWS — nothing
+assume it. This is the modern, recommended way to connect CI to AWS - nothing
 long-lived to leak or rotate.
 
 ### 3. ECR (the image store)
@@ -52,7 +52,7 @@ blocks on `ecs wait services-stable`, so a failed deploy fails the pipeline.
 - **Scoped trust.** Only `main` of the named repo can assume the role
   (`token.actions.githubusercontent.com:sub` condition).
 - **Least-privilege IAM.** The deploy role can push to *this* ECR repo and
-  update *this* ECS service — nothing else. `iam:PassRole` is constrained to
+  update *this* ECS service - nothing else. `iam:PassRole` is constrained to
   `ecs-tasks.amazonaws.com`.
 - **Immutable image tags** (commit SHA) for traceability and clean rollbacks.
 
@@ -60,7 +60,7 @@ blocks on `ecs wait services-stable`, so a failed deploy fails the pipeline.
 
 - **GitHub Actions** is free for public repos and has a generous free tier for
   private ones.
-- **No extra AWS infrastructure** — it reuses the ECR repo and ECS service from
+- **No extra AWS infrastructure** - it reuses the ECR repo and ECS service from
   project 01. The pipeline itself costs nothing to keep around.
 
 ## Set it up
@@ -86,7 +86,7 @@ terraform output deploy_role_arn
 
 CI/CD design, GitHub Actions, OIDC keyless federation to AWS, least-privilege
 deploy roles, immutable image tagging, ECS task-definition versioning, safe
-rolling deployments with health-gated cutover, and rollback readiness — the
+rolling deployments with health-gated cutover, and rollback readiness - the
 DevOps half of a Solutions Architect's toolkit.
 
 Built with the help of [Kiro](https://kiro.dev), Amazon's AI-powered IDE.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ShopFront — dynamic catalog on Amazon ECS + DynamoDB</title>
+  <title>ShopFront - dynamic catalog on Amazon ECS + DynamoDB</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -98,7 +98,7 @@
         const data = await api("/products");
         grid.innerHTML = "";
         if (!data.products.length) {
-          grid.innerHTML = "<p>No products yet — add one above.</p>";
+          grid.innerHTML = "<p>No products yet - add one above.</p>";
         }
         data.products.forEach((p, i) => {
           const card = document.createElement("div");

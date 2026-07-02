@@ -1,4 +1,4 @@
-# Interview Cheat Sheet — Presenting This Portfolio
+# Interview Cheat Sheet - Presenting This Portfolio
 
 A quick reference for talking through these projects in a Solutions Architect
 interview. Lead with the *decision*, then the *design*, then the *cost*.
@@ -6,7 +6,7 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 ## 30-second pitch (memorize this)
 
 > "I built three projects to show container depth on AWS. One runs on ECS
-> Fargate — the low-overhead default. One runs on EKS to show Kubernetes depth,
+> Fargate - the low-overhead default. One runs on EKS to show Kubernetes depth,
 > which I run as an ephemeral, cost-managed environment because the control
 > plane is a fixed ~$73/month. And a CI/CD pipeline deploys to them with keyless
 > OIDC auth. I also wrote a decision memo on when to choose ECS vs EKS, because
@@ -23,7 +23,7 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 
 ## Per-project talking points
 
-### Project 1 — ShopFront on ECS Fargate
+### Project 1 - ShopFront on ECS Fargate
 - **What:** Containerized API on ECS Fargate behind an ALB, autoscaling 1→4.
 - **Why it's cheap:** No control-plane fee, Fargate Spot, no NAT Gateway,
   smallest task size. ~$26/month.
@@ -32,22 +32,22 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 - **Depth probe answers:** awsvpc networking gives each task an ENI; target-type
   `ip` is required for Fargate; health checks gate traffic at the ALB.
 
-### Project 2 — Orders Platform on EKS
+### Project 2 - Orders Platform on EKS
 - **What:** Same style of app on EKS with Deployment/Service/Ingress/HPA.
-- **The honest cost point:** "EKS can't hit $50/month running 24/7 — the control
+- **The honest cost point:** "EKS can't hit $50/month running 24/7 - the control
   plane alone is ~$73. So I treated it like a non-prod environment: fully
   codified in Terraform, `apply` to demo, `destroy` when idle. Real spend was
-  demo hours — cents."
+  demo hours - cents."
 - **Security one-liner:** "Workers in private subnets, IRSA for least-privilege
   pod permissions, ALB is the only public entry point."
 - **Depth probe answers:** HPA needs metrics-server; Ingress → ALB needs the AWS
   Load Balancer Controller; IRSA maps a K8s service account to an IAM role via
   the OIDC provider.
 
-### Project 3 — CI/CD Pipeline
+### Project 3 - CI/CD Pipeline
 - **What:** GitHub Actions builds, pushes to ECR, registers a new task def,
   rolling-deploys to ECS, waits for stable.
-- **Security headline:** "No stored AWS keys — GitHub assumes an IAM role via
+- **Security headline:** "No stored AWS keys - GitHub assumes an IAM role via
   OIDC, scoped to only the main branch of one repo."
 - **Depth probe answers:** commit-SHA image tags for traceability/rollback;
   `iam:PassRole` constrained to `ecs-tasks.amazonaws.com`; deploy fails if tasks
@@ -57,7 +57,7 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 
 - "Spot for stateless workloads is ~70% off in both ECS and EKS."
 - "Single NAT Gateway in non-prod saves ~$33/month per AZ removed."
-- "Ephemeral clusters for dev/test — don't pay for an idle control plane."
+- "Ephemeral clusters for dev/test - don't pay for an idle control plane."
 - "Everything is `terraform destroy`-able, so idle cost trends to zero."
 
 ## Likely follow-up questions + crisp answers
@@ -74,7 +74,7 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 
 **"How do you roll back a bad deploy?"**
 > Each deploy is a new task-def revision. Roll back by pointing the service at
-> the previous revision — or the pipeline auto-fails because `services-stable`
+> the previous revision - or the pipeline auto-fails because `services-stable`
 > never returns.
 
 **"Why Terraform over CloudFormation/CDK?"**
@@ -84,7 +84,7 @@ interview. Lead with the *decision*, then the *design*, then the *cost*.
 
 ## Don'ts
 
-- Don't claim the EKS project is "under $50/month running 24/7." It isn't — own
+- Don't claim the EKS project is "under $50/month running 24/7." It isn't - own
   the ephemeral strategy instead. Honesty about cost *is* the strong answer.
 - Don't oversell complexity. The apps are intentionally simple so the
   architecture is the star.

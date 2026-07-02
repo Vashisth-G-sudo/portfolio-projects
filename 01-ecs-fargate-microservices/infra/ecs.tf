@@ -41,7 +41,7 @@ resource "aws_iam_role_policy_attachment" "execution" {
 }
 
 # Task role: what the application code (container) is allowed to do at runtime.
-# Least-privilege — only CRUD on the single products table.
+# Least-privilege - only CRUD on the single products table.
 resource "aws_iam_role" "task" {
   name_prefix = "${local.name}-task-"
   assume_role_policy = jsonencode({
@@ -78,7 +78,7 @@ resource "aws_ecs_task_definition" "app" {
   family                   = local.name
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
-  cpu                      = 256 # 0.25 vCPU — smallest, cheapest Fargate size
+  cpu                      = 256 # 0.25 vCPU - smallest, cheapest Fargate size
   memory                   = 512 # 0.5 GB
   execution_role_arn       = aws_iam_role.execution.arn
   task_role_arn            = aws_iam_role.task.arn

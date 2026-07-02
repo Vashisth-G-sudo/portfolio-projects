@@ -1,4 +1,4 @@
-"""ShopFront API — a dynamic, database-backed product catalog on ECS Fargate.
+"""ShopFront API - a dynamic, database-backed product catalog on ECS Fargate.
 
 Products are stored in DynamoDB (create / read / update / delete). The task's
 IAM role grants least-privilege access to a single table.

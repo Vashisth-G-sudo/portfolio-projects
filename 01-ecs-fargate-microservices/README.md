@@ -7,7 +7,7 @@
 I built ShopFront to run a containerized web service on AWS **without managing a
 single server**. The application is a small product-catalog API packaged as a
 Docker container. Amazon ECS with the Fargate launch type runs that container
-for me — I never touch an EC2 instance, patch an OS, or manage a cluster of
+for me - I never touch an EC2 instance, patch an OS, or manage a cluster of
 nodes. AWS runs the container, I just say "run 1 of these, keep it healthy, and
 add more when it gets busy."
 
@@ -27,7 +27,7 @@ scales back down.
 ### 1. The Container (the application)
 A small Python Flask app served by gunicorn, packaged in a slim Docker image.
 It exposes `/products`, a `/health` endpoint for load-balancer checks, and a
-`/` endpoint that returns the task hostname — handy for *proving* that requests
+`/` endpoint that returns the task hostname - handy for *proving* that requests
 are being balanced across multiple tasks. It runs as a non-root user inside the
 container for defense in depth.
 
@@ -38,7 +38,7 @@ storage stays effectively free.
 
 ### 3. ECS + Fargate (the runtime)
 ECS is the orchestrator; Fargate is the serverless compute that actually runs
-the container. I define a **task** (0.25 vCPU, 0.5 GB — the smallest size) and a
+the container. I define a **task** (0.25 vCPU, 0.5 GB - the smallest size) and a
 **service** that keeps the desired number of tasks running and registered with
 the load balancer. There is **no control-plane fee** with ECS, which is the key
 reason this project is cheap enough to leave running 24/7.
@@ -52,12 +52,12 @@ outage.
 ### 5. Application Auto Scaling (the elasticity)
 A target-tracking policy watches average CPU. Above 60% it adds tasks (up to 4);
 when things calm down it scales back to 1. This is the core "elastic containers"
-story an SA needs to tell — pay for what you use, absorb spikes automatically.
+story an SA needs to tell - pay for what you use, absorb spikes automatically.
 
 ## How I Kept It Secure
 
 - **Tasks are not exposed to the internet directly.** The task security group
-  only accepts traffic on port 8080 **from the ALB's security group** — nothing
+  only accepts traffic on port 8080 **from the ALB's security group** - nothing
   else can reach the containers.
 - **Least-privilege IAM.** The task execution role has only the managed policy
   needed to pull from ECR and write logs. Nothing more.
@@ -70,20 +70,20 @@ story an SA needs to tell — pay for what you use, absorb spikes automatically.
 
 Every choice here is aimed at a low, predictable bill:
 
-- **Fargate Spot** for the tasks — up to ~70% cheaper than on-demand Fargate.
+- **Fargate Spot** for the tasks - up to ~70% cheaper than on-demand Fargate.
 - **Smallest task size** (0.25 vCPU / 0.5 GB).
 - **No NAT Gateway.** Tasks run in public subnets with a public IP so they can
-  pull images directly — this deliberately avoids the ~$32/month NAT charge. The
+  pull images directly - this deliberately avoids the ~$32/month NAT charge. The
   tasks stay protected because only the ALB can reach them.
 - **No always-on EC2, no data tier.** The catalog is in-memory for the demo.
 
-Full breakdown in [COST.md](./COST.md) — roughly **$26/month** running 24/7, and
+Full breakdown in [COST.md](./COST.md) - roughly **$26/month** running 24/7, and
 you can `terraform destroy` to drop it to near-zero when you're not demoing.
 
 ## Infrastructure as Code
 
-The entire stack — VPC, subnets, ALB, ECR, ECS cluster, task definition,
-service, IAM roles, and autoscaling — is defined in Terraform under `infra/`.
+The entire stack - VPC, subnets, ALB, ECR, ECS cluster, task definition,
+service, IAM roles, and autoscaling - is defined in Terraform under `infra/`.
 One command builds it, one command tears it down. Nothing is clicked together
 in the console.
 
@@ -119,7 +119,7 @@ terraform destroy
 
 Containerization, Amazon ECS/Fargate, ECR, ALB with health checks, target-group
 routing, awsvpc networking, security-group chaining, least-privilege IAM,
-target-tracking autoscaling, multi-AZ design, and cost-aware architecture — all
+target-tracking autoscaling, multi-AZ design, and cost-aware architecture - all
 codified in Terraform.
 
 Built with the help of [Kiro](https://kiro.dev), Amazon's AI-powered IDE.

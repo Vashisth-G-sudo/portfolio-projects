@@ -1,4 +1,4 @@
-# Deployed Resources — ShopFront on ECS Fargate
+# Deployed Resources - ShopFront on ECS Fargate
 
 Deployed to AWS account `471112712607`, region `us-east-1` on 2026-07-01.
 All resources tagged `auto-delete = no`, `Project = shopfront-ecs`,
@@ -39,7 +39,7 @@ All resources tagged `auto-delete = no`, `Project = shopfront-ecs`,
 | IAM Task Role | task | `arn:aws:iam::471112712607:role/shopfront-task-...` |
 | IAM Task Role Policy | task_dynamodb | (inline `shopfront-dynamodb` on the task role) |
 
-**Total: 27 created resources.** The app is now dynamic — products are stored in DynamoDB with full create/read/update/delete.
+**Total: 27 created resources.** The app is now dynamic - products are stored in DynamoDB with full create/read/update/delete.
 
 ## Tear down
 

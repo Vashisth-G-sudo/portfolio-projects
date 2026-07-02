@@ -6,7 +6,7 @@
 resource "aws_cloudfront_distribution" "app" {
   enabled     = true
   comment     = "ShopFront - HTTPS front door for the ALB"
-  price_class = "PriceClass_100" # US/Canada/Europe edges — cheapest
+  price_class = "PriceClass_100" # US/Canada/Europe edges - cheapest
 
   origin {
     domain_name = aws_lb.main.dns_name

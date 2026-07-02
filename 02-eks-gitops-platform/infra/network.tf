@@ -14,7 +14,7 @@ module "vpc" {
   public_subnets  = ["10.30.101.0/24", "10.30.102.0/24"]
 
   enable_nat_gateway = true
-  single_nat_gateway = true # one NAT instead of two — cheaper for a demo
+  single_nat_gateway = true # one NAT instead of two - cheaper for a demo
 
   # Tags required by the AWS Load Balancer Controller for subnet discovery.
   public_subnet_tags = {

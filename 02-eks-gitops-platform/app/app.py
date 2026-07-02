@@ -1,4 +1,4 @@
-"""Orders API — stateless service for the EKS demo.
+"""Orders API - stateless service for the EKS demo.
 
 Kept intentionally simple. The interesting engineering is in the Kubernetes
 manifests and the EKS platform, not the app itself.

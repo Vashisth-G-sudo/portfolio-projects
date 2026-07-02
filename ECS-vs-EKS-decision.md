@@ -19,7 +19,7 @@ Solutions Architect does constantly.
 | Dimension | ECS + Fargate (project 01) | EKS (project 02) |
 |-----------|----------------------------|------------------|
 | Control-plane cost | **$0** | ~$73/month (fixed) |
-| Learning curve | Low — AWS-native concepts | High — full Kubernetes |
+| Learning curve | Low - AWS-native concepts | High - full Kubernetes |
 | Operational overhead | Minimal | Cluster + add-ons to manage |
 | Ecosystem / portability | AWS-only | Huge; portable across clouds |
 | Autoscaling | Application Auto Scaling | HPA + Cluster Autoscaler/Karpenter |
@@ -48,7 +48,7 @@ The single biggest practical difference is the **fixed control-plane fee**:
 - EKS costs ~$73/month **before a single pod runs**, plus nodes, NAT, and ALBs.
 
 For non-production or demo environments, the right move with EKS is to treat the
-cluster as **ephemeral** — codify it in Terraform and destroy it when idle
+cluster as **ephemeral** - codify it in Terraform and destroy it when idle
 (exactly what project 02 does). In production, you justify the control-plane fee
 against the value Kubernetes delivers, and you drive per-workload cost down with
 Spot, right-sizing, Karpenter, and Savings Plans / Compute Savings Plans.
@@ -75,4 +75,4 @@ Spot, right-sizing, Karpenter, and Savings Plans / Compute Savings Plans.
   keyless deployments.
 
 Together they demonstrate not just that I *can* build on ECS and EKS, but that I
-know *which one to recommend and why* — including the cost trade-offs.
+know *which one to recommend and why* - including the cost trade-offs.
