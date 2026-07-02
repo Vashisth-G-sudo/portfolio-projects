@@ -42,5 +42,3 @@ non-production environments at a company.
 2. `terraform apply` in the `infra/` folder to stand it up.
 3. Record a short screen walkthrough (great for a portfolio site or interview).
 4. For EKS: `terraform destroy` when done to stop the control-plane charge.
-
-Built with the help of [Kiro](https://kiro.dev), Amazon's AI-powered IDE.
