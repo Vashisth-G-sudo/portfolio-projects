@@ -4,7 +4,8 @@ Deployed to AWS account `471112712607`, region `us-east-1` on 2026-07-01.
 All resources tagged `auto-delete = no`, `Project = shopfront-ecs`,
 `ManagedBy = terraform`, `Environment = demo`.
 
-**Live app:** http://shopfront-2120594299.us-east-1.elb.amazonaws.com
+**Live app (HTTPS, phone-friendly):** https://d1wfp69cotudi8.cloudfront.net
+**Live app (direct ALB, HTTP):** http://shopfront-2120594299.us-east-1.elb.amazonaws.com
 
 ## Resource inventory (with ARNs)
 
@@ -33,8 +34,9 @@ All resources tagged `auto-delete = no`, `Project = shopfront-ecs`,
 | CloudWatch Log Group | app | `arn:aws:logs:us-east-1:471112712607:log-group:/ecs/shopfront` |
 | App Auto Scaling Target | app | `arn:aws:application-autoscaling:us-east-1:471112712607:scalable-target/0ec57701b9de9cafb12f3843eaa335a5` |
 | App Auto Scaling Policy | cpu | `arn:aws:autoscaling:us-east-1:471112712607:scalingPolicy:.../shopfront-cpu-scaling` |
+| CloudFront Distribution | app | `arn:aws:cloudfront::471112712607:distribution/E20MI37DCKPIBD` (domain `d1wfp69cotudi8.cloudfront.net`) |
 
-**Total: 23 created resources.**
+**Total: 24 created resources.**
 
 ## Tear down
 
